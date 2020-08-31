@@ -1,0 +1,15 @@
+{
+    "D": 3.8,
+    "gamma": 1.5e-3,
+    "deltaFch": 100e9,
+    "numberChannels": 39,
+    "potTxdBm": 2,
+    "initialChannelFrequency": 193.1e12,
+    "bandwidthSignal": 50e9,
+    "lenghtSpan": 100e3,
+    "alpha": 0.2e-3,
+    "numberSpan": 10,
+    "numberPolarizations":2,
+    "NFdb": 5,
+    "gaindB": 20
+}
