@@ -79,47 +79,18 @@ class Gnli:
         return self.numberPolarizations * self.h * self.nu * self.coeficienteAse()
 
 
-    #calcula o modelo ign
     def calculateGnli(self):
         bandwidthSignal = [x * self.bandwidthSignal for x in [1] * self.numberChannels]
-
         G_tx_ch = [x * self.powerSpectralDensity() for x in [1] * self.numberChannels]
-
-        result = 1
-        i = 0
-        while(i < self.numberSpan):
-            n = 0
-            while(n < self.numberChannels):
-                result *= np.prod(np.math.exp(( 1 / self.dB2Neper) * (2 * self.gaindB + self.gaindB - (3 * self.alpha * self.lenghtSpan) ) ) ) \
-                * np.prod( math.exp( (1 / self.dB2Neper) * self.gaindB -(self.alpha * self.lenghtSpan) ) ) \
-                    * math.pow(G_tx_ch[n], 2) * G_tx_ch[i] * (2 - signal.unit_impulse(self.numberChannels, n)) \
-                    * self.psi2(bandwidthSignal[i], bandwidthSignal[n], self.listChannelFrequency[i], self.listChannelFrequency[n])
-                n += 1
-            
-            i += 1
-        
-        return result
-
-
-    def calculateGnli1(self):
-        bandwidthSignal = [x * self.bandwidthSignal for x in [1] * self.numberChannels]
-        G_tx_ch = [x * self.powerSpectralDensity() for x in [1] * self.numberChannels]
-        # gaindB = [x * self.dB2Neper for x in [1] * self.numberChannels]
         gaindB = np.ones((self.numberChannels, self.numberSpan)) * self.gaindB
-        print("beta2: " + str(self.beta2() ) )
-        print("alpha: " + str(self.alpha))
-        print("Neper: " + str(self.dB2Neper))
 
-        # result = 0
-        result = np.ones((self.numberChannels, self.numberSpan))
+        result = np.ones((self.numberChannels, self.numberSpan))    #constroi uma matriz para armazenar o valor parcial 
         i = 0
         while(i < self.numberChannels):
-            print(i)
             j = 0
             while(j < self.numberSpan):
                 n = 0
                 while(n < self.numberChannels):
-                    # print(type())
                     
                     result[n][j] = np.prod(np.exp( (1 / self.dB2Neper) * (2 * gaindB[n][0:j] + gaindB[i][0:j] - (3 * self.alpha * self.lenghtSpan) ) ) ) \
                     * np.prod( np.exp( (1 / self.dB2Neper) * (gaindB[i][j+1:self.numberSpan] -(self.alpha * self.lenghtSpan) ) ) ) \
@@ -127,41 +98,13 @@ class Gnli:
                     * (1 / (4 * constants.pi * abs(self.beta2()) * math.pow((self.alpha / self.dB2Neper), -1) )) \
                     * (math.asinh( math.pow(constants.pi, 2) * math.pow((self.alpha/self.dB2Neper), -1) * abs(self.beta2()) * (self.listChannelFrequency[n] - self.listChannelFrequency[i] + (bandwidthSignal[n]/2)) *bandwidthSignal[i] ) \
                     - math.asinh( math.pow(constants.pi, 2) * math.pow((self.alpha/self.dB2Neper), -1) * abs(self.beta2()) * (self.listChannelFrequency[n] - self.listChannelFrequency[i] - (bandwidthSignal[n]/2)) *bandwidthSignal[i] ) )
-                    
-                    # print(result)
-                    # if(n == 15):
-                        # print("i: "+ str(i))
-                        # print("j: "+ str(j))
-                        # print("n: "+ str(n))
-                        # exit()
 
                     n += 1
 
                 j += 1
             i += 1
-        
-        return result
-    
-    def psi1(self, B_ch_i):
-        """
-        Implementa a equação psi, quando n = i
-        """
-        a = 2 * constants.pi * abs(self.beta2()) * abs(math.pow((2 * self.alpha), -1))
-        b = math.asinh( (math.pow(constants.pi, 2)/2) * abs(self.beta2) * abs(math.pow((2 * self.alpha), -1)) * math.pow(B_ch_i, 2) )
 
-        return b / a
-
-
-    def psi2(self, B_ch_i, B_ch_n, f_ch_i, f_ch_n):
-        """
-        Implementa a equação psi, quando n != i
-        """
-        a = 4 * constants.pi * math.pow((2 * self.alpha), -1) * abs(self.beta2())
-        b = math.pow(constants.pi, 2) * abs(math.pow(2 * self.alpha, -1)) * abs(self.beta2()) * abs(f_ch_n - f_ch_i + (B_ch_n / 2) ) * B_ch_i
-        c = math.pow(constants.pi, 2) * abs(math.pow(2 * self.alpha, -1)) * abs(self.beta2()) * abs(f_ch_n - f_ch_i - (B_ch_n / 2) ) * B_ch_i
-
-        return (b - c) / a
-
+        return (16/27) * math.pow(self.gamma, 2) * math.pow(self.leff(), 2) * np.sum(result)
 
 
     def printInput(self):
@@ -179,6 +122,7 @@ class Gnli:
         print("numberPolarizations: " + str(self.numberPolarizations))
         print("NFdb: " + str(self.NFdb))
         print("gaindB: " + str(self.gaindB))
+        
 
     def printConstants(self):
         print("h: " + str(self.h))
