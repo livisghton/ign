@@ -80,6 +80,9 @@ class Gnli:
 
 
     def calculateGnli(self):
+        """
+        Implementa a eq. (41) do artigo de Poggiolini, referente ao Cálculo do GNLI
+        """
         bandwidthSignal = [x * self.bandwidthSignal for x in [1] * self.numberChannels]
         G_tx_ch = [x * self.powerSpectralDensity() for x in [1] * self.numberChannels]
         gaindB = np.ones((self.numberChannels, self.numberSpan)) * self.gaindB
@@ -105,6 +108,19 @@ class Gnli:
             i += 1
 
         return (16/27) * math.pow(self.gamma, 2) * math.pow(self.leff(), 2) * np.sum(result)
+
+    def snr(self):
+
+        G_tx_ch = [x * self.powerSpectralDensity() for x in [1] * self.numberChannels]
+        gaindB = np.ones((self.numberChannels, self.numberSpan)) * self.gaindB
+
+        i = 0
+        snr = np.ones(self.numberChannels)
+        while(i < self.numberChannels):
+            snr[i] = 10 * np.log10( G_tx_ch[i] * np.prod( math.pow(10, gaindB[i][0:self.numberSpan] - self.alpha * self.lenghtSpan) ) / (self.ase() + self.calculateGnli() ))
+            i += 1
+
+        return snr
 
 
     def printInput(self):
