@@ -2,6 +2,9 @@
 # https://github.com/RenanCbcc/Grafos-Python/blob/master/Aresta.py
 
 class Edge():
+    """
+    Classe que uma aresta.
+    """
     
     def __init__(self, source, destiny, weight):
         self.source = source

@@ -10,6 +10,8 @@ class NetworkStructure:
         self.setNumChannels(self.degree)
         self.setPhysicalMatrix(self.degree)
         self.setNumVertex(self.degree)
+        self.aresta = None
+        self.grafo = None
 
 
     def setDegree(self, degree):
