@@ -131,11 +131,11 @@ class Gnli:
         return snr
 
     def osnrNli(self, snrNli):
-        return snrNli + self.SNR2OSNR
+        return 10 * np.log10(snrNli + self.SNR2OSNR)
 
 
     def osnrEdfa(self, srnAse):
-        return srnAse + self.SNR2OSNR
+        return 10 * np.log10(srnAse + self.SNR2OSNR)
 
 
     def printInput(self):
