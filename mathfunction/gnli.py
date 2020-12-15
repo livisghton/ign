@@ -109,18 +109,33 @@ class Gnli:
 
         return (16/27) * math.pow(self.gamma, 2) * math.pow(self.leff(), 2) * np.sum(result)
 
+    def snrNli(self):
+
+        G_tx_ch = [x * self.powerSpectralDensity() for x in [1] * self.numberChannels]
+        gaindB = np.ones((self.numberChannels, self.numberSpan)) * self.gaindB
+
+        # i = 0
+        # snr = np.ones(self.numberChannels)
+        # while(i < self.numberChannels):
+        #     snr[i] = 10 * np.log10( G_tx_ch[i] * np.prod( np.power(10, (gaindB[i][0:self.numberSpan] - self.alpha * self.lenghtSpan)/10) ) / (self.ase() + self.calculateGnli() ))
+        #     i += 1
+        snrNli = 10 * np.log10( G_tx_ch[0] * np.prod( np.power(10, (gaindB[0][0:self.numberSpan] - self.alpha * self.lenghtSpan)/10) ) / (self.ase() + self.calculateGnli() ))
+        return snrNli
+
     def snr(self):
 
         G_tx_ch = [x * self.powerSpectralDensity() for x in [1] * self.numberChannels]
         gaindB = np.ones((self.numberChannels, self.numberSpan)) * self.gaindB
 
-        i = 0
-        snr = np.ones(self.numberChannels)
-        while(i < self.numberChannels):
-            snr[i] = 10 * np.log10( G_tx_ch[i] * np.prod( math.pow(10, gaindB[i][0:self.numberSpan] - self.alpha * self.lenghtSpan) ) / (self.ase() + self.calculateGnli() ))
-            i += 1
-
+        snr = 10 * np.log10( G_tx_ch[0] * np.prod( np.power(10, (gaindB[0][0:self.numberSpan] - self.alpha * self.lenghtSpan)/10) ) / self.ase() )
         return snr
+
+    def osnrNli(self, snrNli):
+        return snrNli + self.SNR2OSNR
+
+
+    def osnrEdfa(self, srnAse):
+        return srnAse + self.SNR2OSNR
 
 
     def printInput(self):

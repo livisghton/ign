@@ -4,7 +4,7 @@
     "gamma": 1.5e-3,
     "deltaFch": 100e9,
     "numberChannels": 39,
-    "potTxdBm": 2,
+    "potTxdBm": -2,
     "initialChannelFrequency": 193.1e12,
     "bandwidthSignal": 50e9,
     "lenghtSpan": 100e3,
